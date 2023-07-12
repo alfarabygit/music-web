@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- main css -->
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <!-- boxicons -->
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+    <title>Web Music Player</title>
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <button class="hdbtn">
+          <i class="bx bx-left-arrow-alt"></i>
+        </button>
+        <h3 class="p-now">Playing Now</h3>
+        <button class="hdbtn">
+          <i class="bx bxs-playlist"></i>
+        </button>
+      </header>
+      <div class="player">
+        <div class="img-area">
+          <img src="assets/img/icon.png" alt="" />
+        </div>
+        <div class="song-details">
+          <h1 class="name">Indra</h1>
+          <h3 class="artist">Code</h3>
+        </div>
+        <div class="audioControl">
+          <div class="song-timer">
+            <span class="current-time">0:00</span>
+            <span class="max-duration">0:00</span>
+          </div>
+          <div class="progress-area">
+            <div class="progress-bar">
+              <audio src="assets/sounds/music-1.mp3" id="main-audio"></audio>
+            </div>
+          </div>
+        </div>
+        <div class="controls">
+          <button class="btn" id="preview"><i class="bx bx-rewind"></i></button>
+          <button class="play-pause btn"><i class="bx bx-play"></i></button>
+          <button class="btn" id="next"><i class="bx bx-fast-forward"></i></button>
+        </div>
+      </div>
+    </div>
+    <script src="assets/js/music-list.js"></script>
+    <script src="assets/js/main.js"></script>
+  </body>
+</html>
