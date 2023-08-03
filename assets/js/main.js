@@ -1,99 +1,196 @@
-const wrapper = document.querySelector(".wrapper"),
-  musicImg = document.querySelector("img"),
-  musicName = document.querySelector(".name"),
-  musicArtist = document.querySelector(".artist"),
-  playPauseBtn = document.querySelector(".play-pause"),
-  prevBtn = document.querySelector("#preview"),
-  nextBtn = document.querySelector("#next"),
-  mainAudio = document.querySelector("#main-audio"),
-  progressArea = document.querySelector(".progress-area"),
-  progressBar = document.querySelector(".progress-bar");
+let previous = document.querySelector('#pre');
+let play = document.querySelector('#play');
+let next = document.querySelector('#next');
+let title = document.querySelector('#title');
+let recent_volume= document.querySelector('#volume');
+let volume_show = document.querySelector('#volume_show');
+let slider = document.querySelector('#duration_slider');
+let show_duration = document.querySelector('#show_duration');
+let track_image = document.querySelector('#track_image');
+let auto_play = document.querySelector('#auto');
+let present = document.querySelector('#present');
+let total = document.querySelector('#total');
+let artist = document.querySelector('#artist');
 
-let musicIndex = Math.floor(Math.random() * allMusic.length + 1);
-isMusicPaused = true;
 
-window.addEventListener("load", () => {
-  loadMusic(musicIndex);
-});
 
-function loadMusic(indexNumber) {
-  musicName.innerText = allMusic[indexNumber - 1].name;
-  musicArtist.innerText = allMusic[indexNumber - 1].artist;
-  musicImg.src = `assets/img/${allMusic[indexNumber - 1].src}.jpg`;
-  mainAudio.src = `assets/sounds/${allMusic[indexNumber - 1].src}.mp3`;
+let timer;
+let autoplay = 0;
+
+let index_no = 0;
+let Playing_song = false;
+
+//create a audio Element
+let track = document.createElement('audio');
+
+
+//All songs list
+let All_song = [
+   {
+     name: "Cinta ini Membunuhku",
+     path: "assets/sounds/music-1.mp3",
+     img: "assets/img/music-1.jpg",
+     singer: "D'Masiv"
+   },
+   {
+     name: "Lumpuhkan Ingatanku",
+     path: "assets/sounds/music-2.mp3",
+     img: "assets/img/music-2.jpg",
+     singer: "Geisha"
+   },
+   {
+     name: "Minta Ampun Aku",
+     path: "assets/sounds/music-3.mp3",
+     img: "assets/img/music-3.jpg",
+     singer: "D'Masiv"
+   },
+   {
+     name: "Asalkan kau Bahagia",
+     path: "assets/sounds/music-4.mp3",
+     img: "assets/img/music-4.jpg",
+     singer: "Armada"
+   },
+   {
+     name: "Tuhan Tolonglah Aku",
+     path: "assets/sounds/music-5.mp3",
+     img: "assets/img/music-5.jpg",
+     singer: "Derby Romero"
+   }
+];
+
+
+// All functions
+
+
+// function load the track
+function load_track(index_no){
+	clearInterval(timer);
+	reset_slider();
+
+	track.src = All_song[index_no].path;
+	title.innerHTML = All_song[index_no].name;	
+	track_image.src = All_song[index_no].img;
+    artist.innerHTML = All_song[index_no].singer;
+    track.load();
+
+	timer = setInterval(range_slider ,1000);
+	total.innerHTML = All_song.length;
+	present.innerHTML = index_no + 1;
 }
 
-function playMusic() {
-  wrapper.classList.add("paused");
-  musicImg.classList.add("rotate");
-  playPauseBtn.innerHTML = `<i class="bx bx-pause"></i>`;
-  mainAudio.play();
-}
-function pauseMusic() {
-  wrapper.classList.remove("paused");
-  musicImg.classList.remove("rotate");
-  playPauseBtn.innerHTML = `<i class="bx bx-play"></i>`;
-  mainAudio.pause();
+load_track(index_no);
+
+
+//mute sound function
+function mute_sound(){
+	track.volume = 0;
+	volume.value = 0;
+	volume_show.innerHTML = 0;
 }
 
-function prevMusic() {
-  musicIndex--;
-  musicIndex < 1 ? (musicIndex = allMusic.length) : (musicIndex = musicIndex);
-  loadMusic(musicIndex);
-  playMusic();
+
+// checking.. the song is playing or not
+ function justplay(){
+ 	if(Playing_song==false){
+ 		playsong();
+
+ 	}else{
+ 		pausesong();
+ 	}
+ }
+
+
+// reset song slider
+ function reset_slider(){
+ 	slider.value = 0;
+ }
+
+// play song
+function playsong(){
+  track.play();
+  Playing_song = true;
+  play.innerHTML = '<i class="fa fa-pause" aria-hidden="true"></i>';
 }
-function nextMusic() {
-  musicIndex++;
-  musicIndex > allMusic.length ? (musicIndex = 1) : (musicIndex = musicIndex);
-  loadMusic(musicIndex);
-  playMusic();
+
+//pause song
+function pausesong(){
+	track.pause();
+	Playing_song = false;
+	play.innerHTML = '<i class="fa fa-play" aria-hidden="true"></i>';
 }
 
-playPauseBtn.addEventListener("click", () => {
-  const isMusicPlay = wrapper.classList.contains("paused");
-  isMusicPlay ? pauseMusic() : playMusic();
-});
 
-prevBtn.addEventListener("click", () => {
-  prevMusic();
-});
-nextBtn.addEventListener("click", () => {
-  nextMusic();
-});
-mainAudio.addEventListener("timeupdate", (e) => {
-  const currentTime = e.target.currentTime;
-  const duration = e.target.duration;
-  let progressWidth = (currentTime / duration) * 100;
-  progressBar.style.width = `${progressWidth}%`;
+// next song
+function next_song(){
+	if(index_no < All_song.length - 1){
+		index_no += 1;
+		load_track(index_no);
+		playsong();
+	}else{
+		index_no = 0;
+		load_track(index_no);
+		playsong();
 
-  let musicCurrentTime = wrapper.querySelector(".current-time"),
-    musicDuration = wrapper.querySelector(".max-duration");
-  mainAudio.addEventListener("loadeddata", () => {
-    let mainAddDuration = mainAudio.duration;
-    let TotalMin = Math.floor(mainAddDuration / 60);
-    let TotalSec = Math.floor(mainAddDuration % 60);
-    if (TotalSec < 10) {
-      TotalSec = `0${TotalSec}`;
-    }
-    musicDuration.innerText = `${TotalMin}:${TotalSec}`;
-  });
-  let currentMin = Math.floor(currentTime / 60);
-  let currentSec = Math.floor(currentTime % 60);
-  if (currentSec < 10) {
-    currentSec = `0${currentSec}`;
-  }
-  musicCurrentTime.innerText = `${currentMin}:${currentSec}`;
-});
+	}
+}
 
-progressArea.addEventListener("click", (e) => {
-  let progressWidth = progressArea.clientWidth;
-  let clickedOffsetX = e.offsetX;
-  let songDuration = mainAudio.duration;
 
-  mainAudio.currentTime = (clickedOffsetX / progressWidth) * songDuration;
-  playMusic();
-});
+// previous song
+function previous_song(){
+	if(index_no > 0){
+		index_no -= 1;
+		load_track(index_no);
+		playsong();
 
-mainAudio.addEventListener("ended", () => {
-  nextMusic();
-});
+	}else{
+		index_no = All_song.length;
+		load_track(index_no);
+		playsong();
+	}
+}
+
+
+// change volume
+function volume_change(){
+	volume_show.innerHTML = recent_volume.value;
+	track.volume = recent_volume.value / 100;
+}
+
+// change slider position 
+function change_duration(){
+	slider_position = track.duration * (slider.value / 100);
+	track.currentTime = slider_position;
+}
+
+// autoplay function
+function autoplay_switch(){
+	if (autoplay==1){
+       autoplay = 0;
+       auto_play.style.background = "rgba(255,255,255,0.2)";
+	}else{
+       autoplay = 1;
+       auto_play.style.background = "#148F77";
+	}
+}
+
+
+function range_slider(){
+	let position = 0;
+        
+        // update slider position
+		if(!isNaN(track.duration)){
+		   position = track.currentTime * (100 / track.duration);
+		   slider.value =  position;
+	      }
+
+       
+       // function will run when the song is over
+       if(track.ended){
+       	 play.innerHTML = '<i class="fa fa-play" aria-hidden="true"></i>';
+           if(autoplay==1){
+		       index_no += 1;
+		       load_track(index_no);
+		       playsong();
+           }
+	    }
+     }
